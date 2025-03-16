@@ -1,6 +1,8 @@
 #include <iostream>
 #include <vector>
 #include <utility>
+#include <thread>
+#include <chrono>
 #include <SFML/Graphics.hpp>
 
 constexpr int width = 1920;
@@ -25,12 +27,14 @@ void init_grid(std::vector<std::vector<sf::RectangleShape>>& grid) {
             grid[i][j].setPosition({static_cast<float>(j) * cell_size, static_cast<float>(i) * cell_size});
         }
     }
-    set_start_pos(grid);
 }
 
 int main() {
     std::vector<std::vector<sf::RectangleShape>> grid(y_cells, std::vector<sf::RectangleShape>(x_cells));
     init_grid(grid);
+    set_start_pos(grid);
+
+    std::vector<std::vector<sf::RectangleShape>> next_pos(y_cells, std::vector<sf::RectangleShape>(x_cells));
 
     sf::RenderWindow window(sf::VideoMode({width, height}), "Game of life", sf::Style::None);
     window.setFramerateLimit(60);
@@ -41,7 +45,6 @@ int main() {
                 window.close();
             }
         }
-
         window.clear();
         for (const auto& s : grid) {
             for (const auto& j : s) {
@@ -51,3 +54,4 @@ int main() {
         window.display();
     }
 }
+

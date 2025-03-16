@@ -30,14 +30,15 @@ void init_grid(std::vector<std::vector<sf::RectangleShape>>& grid) {
 }
 
 int main() {
+    sf::RenderWindow window(sf::VideoMode({width, height}), "Game of life", sf::Style::None);
+    window.setFramerateLimit(60);
+
     std::vector<std::vector<sf::RectangleShape>> grid(y_cells, std::vector<sf::RectangleShape>(x_cells));
     init_grid(grid);
     set_start_pos(grid);
-
-    std::vector<std::vector<sf::RectangleShape>> next_pos(y_cells, std::vector<sf::RectangleShape>(x_cells));
-
-    sf::RenderWindow window(sf::VideoMode({width, height}), "Game of life", sf::Style::None);
-    window.setFramerateLimit(60);
+    std::vector<std::vector<sf::RectangleShape>> next_grid(y_cells, std::vector<sf::RectangleShape>(x_cells));
+    set_start_pos(next_grid);
+    bool swapped = false;
 
     while (window.isOpen()) {
         while (const std::optional event = window.pollEvent()) {
@@ -45,6 +46,10 @@ int main() {
                 window.close();
             }
         }
+        if (swapped) {
+            
+        }
+
         window.clear();
         for (const auto& s : grid) {
             for (const auto& j : s) {

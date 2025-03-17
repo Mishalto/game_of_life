@@ -29,6 +29,56 @@ void init_grid(std::vector<std::vector<sf::RectangleShape>>& grid) {
     }
 }
 
+void calc_next_grid(std::vector<std::vector<sf::RectangleShape>>& grid, std::vector<std::vector<sf::RectangleShape>>& next_grid) {
+    for (int i = 0; i < static_cast<int>(grid.size()); ++i) {
+        for (int j = 0; j < static_cast<int>(grid[i].size()); ++j) {
+            int living_cells = 0;
+            // Top
+            if (i - 1 >= 0) {
+                if (j - 1 >= 0 && grid[i - 1][j - 1].getFillColor() == sf::Color::Cyan) {
+                    living_cells += 1;
+                }
+                if (grid[i - 1][j].getFillColor() == sf::Color::Cyan) {
+                    living_cells += 1;
+                }
+                if (j + 1 < static_cast<int>(grid[i].size()) && grid[i - 1][j + 1].getFillColor() == sf::Color::Cyan) {
+                    living_cells += 1;
+                }
+            }
+            // Middle
+            if (j - 1 >= 0 && grid[i][j - 1].getFillColor() == sf::Color::Cyan) {
+                living_cells += 1;
+            }
+            if (j + 1 < static_cast<int>(grid[i].size()) && grid[i][j + 1].getFillColor() == sf::Color::Cyan) {
+                living_cells += 1;
+            }
+            // Bottom
+            if (i + 1 < static_cast<int>(grid.size())) {
+                if (j - 1 >= 0 && grid[i + 1][j - 1].getFillColor() == sf::Color::Cyan) {
+                    living_cells += 1;
+                }
+                if (grid[i + 1][j].getFillColor() == sf::Color::Cyan) {
+                    living_cells += 1;
+                }
+                if (j + 1 < static_cast<int>(grid[i].size()) && grid[i + 1][j + 1].getFillColor() == sf::Color::Cyan) {
+                    living_cells += 1;
+                }
+            }
+
+            // Condition
+            if (grid[i][j].getFillColor() == sf::Color::Black && living_cells == 3) {
+                next_grid[i][j].setFillColor(sf::Color::Cyan);
+            }
+            if (grid[i][j].getFillColor() == sf::Color::Cyan && living_cells < 2) {
+                next_grid[i][j].setFillColor(sf::Color::Black);
+            }
+            if (grid[i][j].getFillColor() == sf::Color::Cyan && living_cells > 3) {
+                next_grid[i][j].setFillColor(sf::Color::Black);
+            }
+        }
+    }
+}
+
 int main() {
     sf::RenderWindow window(sf::VideoMode({width, height}), "Game of life", sf::Style::None);
 
@@ -52,53 +102,7 @@ int main() {
             }
         }
 
-        for (int i = 0; i < static_cast<int>(grid.size()); ++i) {
-            for (int j = 0; j < static_cast<int>(grid[i].size()); ++j) {
-                int living_cells = 0;
-                // Top
-                if (i - 1 >= 0) {
-                    if (j - 1 >= 0 && grid[i - 1][j - 1].getFillColor() == sf::Color::Cyan) {
-                        living_cells += 1;
-                    }
-                    if (grid[i - 1][j].getFillColor() == sf::Color::Cyan) {
-                        living_cells += 1;
-                    }
-                    if (j + 1 < static_cast<int>(grid[i].size()) && grid[i - 1][j + 1].getFillColor() == sf::Color::Cyan) {
-                        living_cells += 1;
-                    }
-                }
-                // Middle
-                if (j - 1 >= 0 && grid[i][j - 1].getFillColor() == sf::Color::Cyan) {
-                    living_cells += 1;
-                }
-                if (j + 1 < static_cast<int>(grid[i].size()) && grid[i][j + 1].getFillColor() == sf::Color::Cyan) {
-                    living_cells += 1;
-                }
-                // Bottom
-                if (i + 1 < static_cast<int>(grid.size())) {
-                    if (j - 1 >= 0 && grid[i + 1][j - 1].getFillColor() == sf::Color::Cyan) {
-                        living_cells += 1;
-                    }
-                    if (grid[i + 1][j].getFillColor() == sf::Color::Cyan) {
-                        living_cells += 1;
-                    }
-                    if (j + 1 < static_cast<int>(grid[i].size()) && grid[i + 1][j + 1].getFillColor() == sf::Color::Cyan) {
-                        living_cells += 1;
-                    }
-                }
-
-                // Condition
-                if (grid[i][j].getFillColor() == sf::Color::Black && living_cells == 3) {
-                    next_grid[i][j].setFillColor(sf::Color::Cyan);
-                }
-                if (grid[i][j].getFillColor() == sf::Color::Cyan && living_cells < 2) {
-                    next_grid[i][j].setFillColor(sf::Color::Black);
-                }
-                if (grid[i][j].getFillColor() == sf::Color::Cyan && living_cells > 3) {
-                    next_grid[i][j].setFillColor(sf::Color::Black);
-                }
-            }
-        }
+        calc_next_grid(grid, next_grid);
 
         window.clear();
         for (const auto& s : grid) {
@@ -118,12 +122,14 @@ int main() {
         auto end_time = std::chrono::high_resolution_clock::now();
         std::chrono::duration<float> duration = end_time - start_time;
 
-        if (std::chrono::duration<float>(end_time - last_time).count() >= 1.0f) {  // каждые 1 секунду
+        if (std::chrono::duration<float>(end_time - last_time).count() >= 1.0f) {
             fps = frame_count;
             frame_count = 0;
             last_time = end_time;
             std::cout << "FPS: " << fps << std::endl;
         }
     }
+
+    return 0;
 }
 

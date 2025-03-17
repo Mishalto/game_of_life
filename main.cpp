@@ -35,11 +35,17 @@ int main() {
     std::vector<std::vector<sf::RectangleShape>> grid(y_cells, std::vector<sf::RectangleShape>(x_cells));
     init_grid(grid);
     set_start_pos(grid);
+
     std::vector<std::vector<sf::RectangleShape>> next_grid(y_cells, std::vector<sf::RectangleShape>(x_cells));
     init_grid(next_grid);
     set_start_pos(next_grid);
 
+    auto last_time = std::chrono::high_resolution_clock::now();
+    int frame_count = 0;
+    float fps = 0.0f;
+
     while (window.isOpen()) {
+        auto start_time = std::chrono::high_resolution_clock::now();
         while (const std::optional event = window.pollEvent()) {
             if (event->is<sf::Event::Closed>()) {
                 window.close();
@@ -106,6 +112,17 @@ int main() {
             for (size_t j = 0; j < grid[i].size(); ++j) {
                 grid = next_grid;
             }
+        }
+
+        frame_count++;
+        auto end_time = std::chrono::high_resolution_clock::now();
+        std::chrono::duration<float> duration = end_time - start_time;
+
+        if (std::chrono::duration<float>(end_time - last_time).count() >= 1.0f) {  // каждые 1 секунду
+            fps = frame_count;
+            frame_count = 0;
+            last_time = end_time;
+            std::cout << "FPS: " << fps << std::endl;
         }
     }
 }

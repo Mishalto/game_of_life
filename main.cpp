@@ -31,7 +31,6 @@ void init_grid(std::vector<std::vector<sf::RectangleShape>>& grid) {
 
 int main() {
     sf::RenderWindow window(sf::VideoMode({width, height}), "Game of life", sf::Style::None);
-    window.setFramerateLimit(60);
 
     std::vector<std::vector<sf::RectangleShape>> grid(y_cells, std::vector<sf::RectangleShape>(x_cells));
     init_grid(grid);
@@ -50,7 +49,6 @@ int main() {
         for (int i = 0; i < static_cast<int>(grid.size()); ++i) {
             for (int j = 0; j < static_cast<int>(grid[i].size()); ++j) {
                 int living_cells = 0;
-
                 // Top
                 if (i - 1 >= 0) {
                     if (j - 1 >= 0 && grid[i - 1][j - 1].getFillColor() == sf::Color::Cyan) {
@@ -65,9 +63,6 @@ int main() {
                 }
                 // Middle
                 if (j - 1 >= 0 && grid[i][j - 1].getFillColor() == sf::Color::Cyan) {
-                    living_cells += 1;
-                }
-                if (grid[i][j].getFillColor() == sf::Color::Cyan) {
                     living_cells += 1;
                 }
                 if (j + 1 < static_cast<int>(grid[i].size()) && grid[i][j + 1].getFillColor() == sf::Color::Cyan) {
@@ -107,10 +102,9 @@ int main() {
         }
         window.display();
 
-        std::this_thread::sleep_for(std::chrono::seconds(1));
         for (size_t i = 0; i < grid.size(); ++i) {
             for (size_t j = 0; j < grid[i].size(); ++j) {
-                next_grid[i][j] = grid[i][j];
+                grid = next_grid;
             }
         }
     }

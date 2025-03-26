@@ -32,3 +32,4 @@
 *.app
 /build
 /.vscode
+/SFML-3.0.0
